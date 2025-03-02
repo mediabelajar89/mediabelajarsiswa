@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alat Gambar Isometrik</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
+        #toolbar {
+            margin-bottom: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Alat Gambar Isometrik</h1>
+    <div id="toolbar">
+        <button onclick="clearCanvas()">Hapus</button>
+        <button onclick="toggleGrid()">Tampilkan/Sembunyikan Grid</button>
+    </div>
+    <canvas id="isometricCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("isometricCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let isDrawing = false;
+        let showGrid = true;
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#ddd";
+            ctx.lineWidth = 0.5;
+
+            const size = 20;
+            for (let x = -canvas.width; x < canvas.width; x += size) {
+                ctx.beginPath();
+                ctx.moveTo(x + canvas.width / 2, 0);
+                ctx.lineTo(x + canvas.width / 2 + size, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = -canvas.height; y < canvas.height; y += size) {
+                ctx.beginPath();
+                ctx.moveTo(0, y + canvas.height / 2);
+                ctx.lineTo(canvas.width, y + canvas.height / 2 + size);
+                ctx.stroke();
+            }
+        }
+
+        function startDrawing(event) {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+        }
+
+        function draw(event) {
+            if (!isDrawing) return;
+            ctx.lineTo(event.offsetX, event.offsetY);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.closePath();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (showGrid) drawGrid();
+        }
+
+        function toggleGrid() {
+            showGrid = !showGrid;
+            clearCanvas();
+        }
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("mouseleave", stopDrawing);
+
+        drawGrid();
+    </script>
+</body>
+</html>
